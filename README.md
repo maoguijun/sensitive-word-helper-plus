@@ -1,17 +1,17 @@
 # sensitive word helper
 
-基于 https://github.com/ZhelinCheng/sensitive-word-helper 做的修改
+基于 https://github.com/ZhelinCheng/sensitive-word-helper-plus 做的修改
 
 ## 📦 安装
 
 ```
-npm i -S sensitive-word-helper
+npm i -S sensitive-word-helper-plus
 ```
 
 或
 
 ```
-yarn add sensitive-word-helper
+yarn add sensitive-word-helper-plus
 ```
 
 ## 🎉 使用
@@ -19,7 +19,7 @@ yarn add sensitive-word-helper
 ### NodeJS
 
 ```javascript
-const SWH = require('sensitive-word-helper');
+const SWH = require('sensitive-word-helper-plus');
 const swh = new SWH({
    keywords: ['敏感词数组'];
   neglectwords?:['忽略的字符数组']; // 比如 [' '] 'a  b' 也可以匹配到 'ab'
@@ -36,7 +36,7 @@ swh.filterSync('word');
 ### TypeScript
 
 ```typescript
-import SWH from 'sensitive-word-helper';
+import SWH from 'sensitive-word-helper-plus';
 const swh = new SWH({ keywords: ['敏感词数组'] });
 
 // 异步方法，该方法返回的是一个Promise对象
@@ -64,7 +64,7 @@ swh.filterSync('word');
 该方法将返回过滤文本和被过滤的敏感词。
 
 ```typescript
-import SWH from 'sensitive-word-helper';
+import SWH from 'sensitive-word-helper-plus';
 const swh = new SWH({ keywords: ['敏感词数组'] });
 
 swh.filter('这是一个敏感词字符串').then(data => {
@@ -90,7 +90,7 @@ swh.filter('这是一个敏感词字符串', false).then(data => {
 判断文本是否通过敏感词验证，发现敏感词立即返回`false`，为`true`表示通过验证，没有敏感词。该方法是一个异步方法，将会返回一个 Promise 对象。
 
 ```typescript
-import SWH from 'sensitive-word-helper';
+import SWH from 'sensitive-word-helper-plus';
 const swh = new SWH(['敏感词']);
 
 swh.every('这是一个敏感词字符串').then(data => {

@@ -1,7 +1,7 @@
 {
-  "name": "mint-filter",
-  "version": "1.0.0",
-  "description": "🚀基于Aho–Corasick算法，更轻巧的Node.js敏感词过滤库。",
+  "name": "sensitive-word-helper-plus",
+  "version": "1.0.1",
+  "description": "基于DFA算法的一个敏感词助手",
   "main": "./dist/index.js",
   "scripts": {
     "start": "node ./dist/index.js",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/maoguijun/sensitive-word-helper"
+    "url": "git+https://github.com/maoguijun/sensitive-word-helper-plus"
   },
   "devDependencies": {
     "@types/jest": "^24.0.11",
@@ -46,9 +46,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/maoguijun/sensitive-word-helper/issues"
+    "url": "https://github.com/maoguijun/sensitive-word-helper-plus/issues"
   },
-  "homepage": "https://github.com/maoguijun/sensitive-word-helper#readme",
+  "homepage": "https://github.com/maoguijun/sensitive-word-helper-plus#readme",
   "husky": {
     "hooks": {
       "pre-commit": "npm run tslint"
