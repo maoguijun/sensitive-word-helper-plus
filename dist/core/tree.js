@@ -15,6 +15,7 @@ class Tree {
     constructor() {
         this.neglectwords = [];
         this.replacement = '*';
+        this.step = 3;
         this.root = new node_1.default('root');
     }
     /**

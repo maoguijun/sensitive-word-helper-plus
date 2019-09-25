@@ -8,17 +8,17 @@ interface FilterValue {
     filter: Array<string>;
     pass?: boolean;
 }
-interface SwhpConstructor {
+interface MintConstructor {
     keywords: Array<string>;
+    neglectwords?: Array<string>;
     replacement?: string;
-    step?: number;
 }
 declare class SensitiveWord extends Tree {
     /**
      * 兼容1.1.6
      */
     static default: any;
-    constructor(obj: SwhpConstructor);
+    constructor(obj: MintConstructor);
     _filterFn(word: string, every?: boolean, replace?: boolean): FilterValue;
     /**
      * 异步快速检测字符串是否无敏感词

@@ -21,9 +21,9 @@ yarn add sensitive-word-helper-plus
 ```javascript
 const SWH = require('sensitive-word-helper-plus');
 const swh = new SWH({
-   keywords: ['敏感词数组'];
-  neglectwords?:['忽略的字符数组']; // 比如 [' '] 'a  b' 也可以匹配到 'ab'
-  replacement?: ['替换后的字符']; // 默认是 *, 比如 'a b' 默认会替换成  '* *'
+  keywords: ['敏感词数组'],
+  neglectwords: ['忽略的字符数组'], // 比如 [' '] 'a  b' 也可以匹配到 'ab'
+  replacement: '*' // 默认是 *, 比如 'a b' 默认会替换成  '* *'
 });
 
 // 异步方法，该方法返回的是一个Promise对象
@@ -37,7 +37,11 @@ swh.filterSync('word');
 
 ```typescript
 import SWH from 'sensitive-word-helper-plus';
-const swh = new SWH({ keywords: ['敏感词数组'] });
+const swh = new SWH({
+  keywords: ['敏感词数组'],
+  neglectwords: ['忽略的字符数组'], // 比如 [' '] 'a  b' 也可以匹配到 'ab'
+  replacement: '*' // 默认是 *, 比如 'a b' 默认会替换成  '* *'
+});
 
 // 异步方法，该方法返回的是一个Promise对象
 swh.filter('word').then(res => {});
@@ -65,7 +69,11 @@ swh.filterSync('word');
 
 ```typescript
 import SWH from 'sensitive-word-helper-plus';
-const swh = new SWH({ keywords: ['敏感词数组'] });
+const swh = new SWH({
+  keywords: ['敏感词数组'],
+  neglectwords: ['忽略的字符数组'], // 比如 [' '] 'a  b' 也可以匹配到 'ab'
+  replacement: '*' // 默认是 *, 比如 'a b' 默认会替换成  '* *'
+});
 
 swh.filter('这是一个敏感词字符串').then(data => {
   console.log(data); // { text: '这是一个***字符串', filter: [ '敏感词' ], pass: false }
@@ -91,7 +99,11 @@ swh.filter('这是一个敏感词字符串', false).then(data => {
 
 ```typescript
 import SWH from 'sensitive-word-helper-plus';
-const swh = new SWH(['敏感词']);
+const swh = new SWH({
+  keywords: ['敏感词数组'],
+  neglectwords: ['忽略的字符数组'], // 比如 [' '] 'a  b' 也可以匹配到 'ab'
+  replacement: '*' // 默认是 *, 比如 'a b' 默认会替换成  '* *'
+});
 
 swh.every('这是一个敏感词字符串').then(data => {
   console.log(data); // true

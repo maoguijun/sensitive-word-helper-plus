@@ -53,5 +53,8 @@
     "hooks": {
       "pre-commit": "npm run tslint"
     }
+  },
+  "dependencies": {
+    "axios": "^0.19.0"
   }
 }

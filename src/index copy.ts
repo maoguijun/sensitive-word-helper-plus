@@ -10,10 +10,10 @@ interface FilterValue {
   pass?: boolean;
 }
 
-interface SwhpConstructor {
+interface MintConstructor {
   keywords: Array<string>;
+  neglectwords?: Array<string>;
   replacement?: string;
-  step?: number;
 }
 
 class SensitiveWord extends Tree {
@@ -22,20 +22,18 @@ class SensitiveWord extends Tree {
    */
   static default: any;
   // 是否替换原文本敏感词
-  constructor(obj: SwhpConstructor) {
+  constructor(obj: MintConstructor) {
     super();
-    const { keywords, step, replacement } = obj;
+    const { keywords, neglectwords, replacement } = obj;
     if (!(keywords instanceof Array && keywords.length >= 1)) {
       console.error('mint-filter：未将过滤词数组传入！');
       return;
     }
-
+    if (Array.isArray(neglectwords)) {
+      this.neglectwords = neglectwords;
+    }
     if (typeof replacement === 'string') {
       this.replacement = replacement;
-    }
-
-    if (Number[Symbol.hasInstance](step)) {
-      this.step = step;
     }
 
     // 创建Trie树
@@ -52,19 +50,13 @@ class SensitiveWord extends Tree {
     every: boolean = false,
     replace: boolean = true
   ): FilterValue {
-    const valStep = this.step + 1;
     let startIndex = 0;
     let endIndex = startIndex;
     const wordLen = word.length;
     let originalWord: string = word;
     let filterKeywords: Array<string> = [];
-
-    let originalCacheText: string = '';
-    let filterCacheText: string = '';
+    let spareText: string = ''; // 当敏感字之间有neglectwords 的时候才会起作用
     word = word.toLocaleUpperCase();
-
-    // 当前步数
-    let step: number = 0;
 
     // 保存过滤文本
     let filterText: string = '';
@@ -76,55 +68,67 @@ class SensitiveWord extends Tree {
     let isJudge: boolean = false;
     let judgeText: string = '';
 
-    // 上一个Node与当前Node
+    // 上一个Node与下一个Node
     let prevNode: Node = this.root;
     let currNode: Node | boolean;
+
+    // 保存filterKey
+    let filterKey: string = '';
 
     for (endIndex; endIndex <= wordLen; endIndex++) {
       let key: string = word[endIndex];
       let originalKey: string = originalWord[endIndex];
       currNode = this.search(key, prevNode.children);
 
-      // 上一个是，这一个也是
+      // console.log(
+      //   'key:',
+      //   key,
+      //   'originalKey:',
+      //   originalKey,
+      //   'judgeText:',
+      //   judgeText,
+      //   'currNode:',
+      //   currNode,
+      //   'prevNode:',
+      //   prevNode,
+      //   'spareText:',
+      //   spareText
+      // );
+
       if (isJudge && currNode) {
         if (replace) {
-          filterCacheText += this.replacement; // 这个不光记录字符，同时还记录了是否在寻找字符
-          originalCacheText += key;
+          if (spareText) {
+          } else {
+            judgeText += originalKey;
+          }
         }
-        judgeText += originalKey;
         prevNode = currNode;
         continue;
       } else if (isJudge && prevNode.word) {
-        // 上一个是，这个不是，但是上一个是节点的最后一个；
         isPass = false;
-        isJudge = false;
         if (every) {
           break;
         }
         if (replace) {
-          console.log(105, filterCacheText);
-          filterText += filterCacheText;
-          filterCacheText = '';
-          originalCacheText = '';
+          if (spareText) {
+            filterText += spareText;
+          } else {
+            // filterText += this.replacement.repeat(endIndex - startIndex);
+          }
         }
-        filterKeywords.push(judgeText);
-        judgeText = '';
-        step = 0;
-      } else if (isJudge) {
-      } else if (step && step <= valStep && currNode) {
-        // 或者在步长内找到了目标
-        step = 0;
-      } else if (step && step <= valStep) {
-        // 在步长内没有找到
-        // filterCacheText += judgeText;
-        // originalCacheText += judgeText;
+        filterKeywords.push(filterKey);
+        filterKey = '';
+      } else if (this.neglectwords.includes(judgeText)) {
+        // 他的作用就是隔开来，跟其他的情况做区分
       } else if (replace) {
-        filterText += judgeText;
-        judgeText = '';
+        if (spareText) {
+        } else {
+          filterText += judgeText;
+        }
       }
 
-      // 直接在分支上找不到，就返回上一级找，依次找到root
-      if (!currNode && !step) {
+      if (!currNode) {
+        // 直接在分支上找不到，需要走failure
         let failure: Node = prevNode.failure;
 
         while (failure) {
@@ -135,40 +139,28 @@ class SensitiveWord extends Tree {
           failure = failure.failure;
         }
       }
-      console.log(103, currNode);
+      // 如果找到了那么就是敏感词，否则就跳出到root
+      // 加一个规则，用来适配例如 "法  轮  功" 这样由空格或者其他分隔符的
+
       if (currNode) {
-        judgeText += originalKey;
+        judgeText = originalKey;
         isJudge = true;
         prevNode = currNode;
-        step++;
-        if (replace) {
-          filterCacheText += this.replacement; // 这个不光记录字符，同时还记录了是否在寻找字符
-          originalCacheText += originalKey;
-        }
-      } else {
-        // 如果step 还在设定的范围内，则继续寻找
-
-        if ((isJudge || step) && step < valStep) {
-          if (replace) {
-            filterCacheText += originalKey;
-            originalCacheText += originalKey;
-          }
-          step++;
-        } else {
-          step = 0;
-          judgeText = '';
-          prevNode = this.root;
-          if (replace) {
-            if (key !== undefined) {
-              filterText += originalKey;
-            }
-            filterCacheText = '';
-            originalCacheText = '';
-          }
-        }
-
+        spareText += this.replacement;
+        filterKey += originalKey;
+      } else if (this.neglectwords.includes(originalKey)) {
+        judgeText = originalKey;
+        spareText += originalKey;
         isJudge = false;
+      } else {
+        judgeText = '';
+        isJudge = false;
+        prevNode = this.root;
+        if (replace && key !== undefined) {
+          filterText += originalKey;
+        }
       }
+      startIndex = endIndex;
     }
 
     return {

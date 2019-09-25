@@ -9,6 +9,7 @@ export default class Tree {
     constructor();
     neglectwords: Array<string>;
     replacement: string;
+    step: number;
     /**
      * 插入数据
      * @param key
