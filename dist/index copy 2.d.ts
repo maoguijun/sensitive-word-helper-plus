@@ -21,12 +21,6 @@ declare class SensitiveWord extends Tree {
     constructor(obj: SwhpConstructor);
     _filterFn(word: string, every?: boolean, replace?: boolean): FilterValue;
     /**
-     * 合并两个字符串
-     * @param text1 // 已有的字符串
-     * @param text2 // 需要合并上去的字符串
-     */
-    private convetString;
-    /**
      * 异步快速检测字符串是否无敏感词
      * @param word
      */

@@ -43,118 +43,150 @@ class SensitiveWord extends core_1.Tree {
         const wordLen = word.length;
         let originalWord = word;
         let filterKeywords = [];
-        let originalCacheText = '';
-        let filterCacheText = '';
         word = word.toLocaleUpperCase();
-        // 当前步数
-        let step = 0;
+        let judgeObjectList = {};
         // 保存过滤文本
-        let filterText = '';
+        let filterTextArr = originalWord.split('');
+        console.log(82, filterTextArr);
         // 是否通过，无敏感词
         let isPass = true;
-        // 正在进行划词判断
-        let isJudge = false;
-        let judgeText = '';
-        // 上一个Node与当前Node
-        let prevNode = this.root;
+        // // 上一个Node与当前Node
+        // let prevNode: Node = this.root;
         let currNode;
         for (endIndex; endIndex <= wordLen; endIndex++) {
             let key = word[endIndex];
             let originalKey = originalWord[endIndex];
-            currNode = this.search(key, prevNode.children);
-            // 上一个是，这一个也是
-            if (isJudge && currNode) {
-                if (replace) {
-                    filterCacheText += this.replacement; // 这个不光记录字符，同时还记录了是否在寻找字符
-                    originalCacheText += key;
+            // currNode = this.search(key, prevNode.children);
+            // 分词数组如果是空的，就表示目前没有未处理的敏感词
+            const judgeObjectListLeng = Object.keys(judgeObjectList).length;
+            // console.log(99, endIndex, judgeObjectListLeng, key, originalKey);
+            if (!judgeObjectListLeng) {
+                currNode = this.search(key, this.root.children);
+                if (!currNode) {
+                    // 没有找到就直接拼接
+                    if (!replace) {
+                        continue;
+                    }
+                    filterTextArr[endIndex] = originalKey;
+                    continue;
                 }
-                judgeText += originalKey;
-                prevNode = currNode;
+                // 判断这个节点是否就是最后一个节点，针对的是单个字符的敏感词
+                if (currNode.word) {
+                    filterTextArr[endIndex] = this.replacement;
+                    continue;
+                }
+                let judgeObject = {
+                    startIndex: endIndex,
+                    lastFindNodeIndex: endIndex,
+                    findNodeIndexArr: [endIndex],
+                    startNode: currNode,
+                    prevNode: currNode,
+                    filterKey: originalKey // 存储当前敏感词，每次匹配到则自动合并过来
+                };
+                judgeObjectList[String(endIndex)] = judgeObject;
                 continue;
             }
-            else if (isJudge && prevNode.word) {
-                // 上一个是，这个不是，但是上一个是节点的最后一个；
-                isPass = false;
-                isJudge = false;
-                if (every) {
-                    break;
+            // 分词数组中不为空
+            for (let judgeKey in judgeObjectList) {
+                const judgeObject = judgeObjectList[judgeKey];
+                // console.log(133, judgeObject);
+                // 先判断有没有节点
+                const currNode = this.search(key, judgeObject.prevNode.children);
+                // console.log(137, key, judgeObject.prevNode.children, currNode);
+                // 如果没有找到就去上一级
+                if (!currNode) {
+                    let failure = judgeObject.prevNode.failure;
+                    let cruNode;
+                    while (failure) {
+                        cruNode = this.search(key, failure.children);
+                        if (currNode) {
+                            break;
+                        }
+                        failure = failure.failure;
+                    }
+                    // console.log(154, cruNode);
+                    if (cruNode) {
+                        // 找到了就又往list 中插入一个分析对象
+                        let judgeObject_ = {
+                            startIndex: endIndex,
+                            lastFindNodeIndex: endIndex,
+                            findNodeIndexArr: [endIndex],
+                            startNode: cruNode,
+                            prevNode: cruNode,
+                            filterKey: originalKey // 存储当前敏感词，每次匹配到则自动合并过来
+                        };
+                        judgeObjectList[String(endIndex)] = judgeObject_;
+                    }
                 }
-                if (replace) {
-                    console.log(105, filterCacheText);
-                    filterText += filterCacheText;
-                    filterCacheText = '';
-                    originalCacheText = '';
+                // 先判断这个划词对象是否过期了
+                if (endIndex - judgeObject.lastFindNodeIndex > this.step) {
+                    // 那么跳过 ，并删除这个对象
+                    delete judgeObjectList[judgeKey];
                 }
-                filterKeywords.push(judgeText);
-                judgeText = '';
-                step = 0;
-            }
-            else if (isJudge) {
-            }
-            else if (step && step <= valStep && currNode) {
-                // 或者在步长内找到了目标
-                step = 0;
-            }
-            else if (step && step <= valStep) {
-                // 在步长内没有找到
-                // filterCacheText += judgeText;
-                // originalCacheText += judgeText;
-            }
-            else if (replace) {
-                filterText += judgeText;
-                judgeText = '';
-            }
-            // 直接在分支上找不到，就返回上一级找，依次找到root
-            if (!currNode && !step) {
-                let failure = prevNode.failure;
-                while (failure) {
-                    currNode = this.search(key, failure.children);
-                    if (currNode) {
+                // 如果没有找到currNode 或者 超过了step 那么就跳出当前循环
+                if (!currNode || endIndex - judgeObject.lastFindNodeIndex > this.step) {
+                    continue;
+                }
+                // 如果找到了
+                // 判断word 是否是 true
+                const findNodeIndexArr = judgeObject.findNodeIndexArr.concat(endIndex);
+                const filterKey = judgeObject.filterKey + originalKey;
+                if (currNode.word) {
+                    // 这里不清理这个对象的原因是可能后面还有word 为 true 的情况
+                    judgeObjectList[judgeKey] = Object.assign(Object.assign({}, judgeObject), { findNodeIndexArr, lastFindNodeIndex: endIndex, prevNode: currNode, filterKey });
+                    isPass = false;
+                    if (every) {
                         break;
                     }
-                    failure = failure.failure;
-                }
-            }
-            console.log(103, currNode);
-            if (currNode) {
-                judgeText += originalKey;
-                isJudge = true;
-                prevNode = currNode;
-                step++;
-                if (replace) {
-                    filterCacheText += this.replacement; // 这个不光记录字符，同时还记录了是否在寻找字符
-                    originalCacheText += originalKey;
-                }
-            }
-            else {
-                // 如果step 还在设定的范围内，则继续寻找
-                if ((isJudge || step) && step < valStep) {
-                    if (replace) {
-                        filterCacheText += originalKey;
-                        originalCacheText += originalKey;
+                    filterKeywords.push(filterKey);
+                    if (!replace) {
+                        continue;
                     }
-                    step++;
+                    findNodeIndexArr.forEach(index => {
+                        filterTextArr[index] = this.replacement;
+                    });
+                    continue;
                 }
-                else {
-                    step = 0;
-                    judgeText = '';
-                    prevNode = this.root;
-                    if (replace) {
-                        if (key !== undefined) {
-                            filterText += originalKey;
-                        }
-                        filterCacheText = '';
-                        originalCacheText = '';
-                    }
+                // word 不是true 的情况
+                if (!currNode.word) {
+                    judgeObjectList[judgeKey] = Object.assign(Object.assign({}, judgeObject), { findNodeIndexArr, lastFindNodeIndex: endIndex, prevNode: currNode, filterKey });
                 }
-                isJudge = false;
             }
         }
         return {
-            text: replace ? filterText : originalWord,
+            text: replace ? filterTextArr.join('') : originalWord,
             filter: [...new Set(filterKeywords)],
             pass: isPass
         };
+    }
+    /**
+     * 合并两个字符串
+     * @param text1 // 已有的字符串
+     * @param text2 // 需要合并上去的字符串
+     */
+    convetString(text1, text2) {
+        const text1Len = text1.length;
+        const text2Len = text2.length;
+        const length = text1Len > text2Len ? text1Len : text2Len;
+        let result = '';
+        for (let i = 0; i < length; i++) {
+            const text1Char = text1[i];
+            const text2Char = text2[i];
+            if (text1Char === this.replacement) {
+                result += text1Char;
+                continue;
+            }
+            if (text2Char === this.replacement) {
+                result += text2Char;
+                continue;
+            }
+            if (text1Char) {
+                result += text1Char;
+                continue;
+            }
+            result += text2Char;
+        }
+        return result;
     }
     /**
      * 异步快速检测字符串是否无敏感词
