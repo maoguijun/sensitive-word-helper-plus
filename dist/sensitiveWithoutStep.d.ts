@@ -8,17 +8,17 @@ interface FilterValue {
     filter: Array<string>;
     pass?: boolean;
 }
-interface MintConstructor {
+interface SwhpConstructor {
     keywords: Array<string>;
-    neglectwords?: Array<string>;
     replacement?: string;
+    step?: number;
 }
-declare class SensitiveWord extends Tree {
+declare class SensitiveWithoutStep extends Tree {
     /**
      * 兼容1.1.6
      */
     static default: any;
-    constructor(obj: MintConstructor);
+    constructor(obj: SwhpConstructor);
     _filterFn(word: string, every?: boolean, replace?: boolean): FilterValue;
     /**
      * 异步快速检测字符串是否无敏感词
@@ -43,4 +43,4 @@ declare class SensitiveWord extends Tree {
      */
     filter(word: string, replace?: boolean): Promise<FilterValue>;
 }
-export = SensitiveWord;
+export = SensitiveWithoutStep;

@@ -1,6 +1,6 @@
 {
   "name": "sensitive-word-helper-plus",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "基于DFA算法的一个敏感词助手, 可以做步长控制",
   "main": "./dist/index.js",
   "scripts": {
@@ -43,7 +43,7 @@
   ],
   "author": {
     "name": "maoguijun",
-    "email": "maoguijun@gmail.com",
+    "email": "maoguijun1992@gmail.com",
     "url": ""
   },
   "license": "MIT",
