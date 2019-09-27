@@ -10,9 +10,9 @@ interface SwhpConstructor {
 class SensitiveWordHelp {
   static default: any;
   constructor(obj: SwhpConstructor) {
-    const { keywords, step, replacement } = obj;
+    const { keywords, step = 3, replacement } = obj;
 
-    if (step !== undefined && step) {
+    if (step) {
       return new SensitiveWithStep(obj);
     } else {
       return new SensitiveWithoutStep(obj);
