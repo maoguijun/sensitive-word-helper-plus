@@ -1,7 +1,7 @@
 {
   "name": "sensitive-word-helper-plus",
-  "version": "1.0.1",
-  "description": "基于DFA算法的一个敏感词助手",
+  "version": "1.0.3",
+  "description": "基于DFA算法的一个敏感词助手, 可以做步长控制",
   "main": "./dist/index.js",
   "scripts": {
     "start": "node ./dist/index.js",
@@ -37,7 +37,9 @@
     "sensitive word helper",
     "sensitive",
     "filter",
-    "敏感词"
+    "敏感词",
+    "步长",
+    "step"
   ],
   "author": {
     "name": "maoguijun",
@@ -54,7 +56,5 @@
       "pre-commit": "npm run tslint"
     }
   },
-  "dependencies": {
-    "axios": "^0.19.0"
-  }
+  "dependencies": {}
 }
