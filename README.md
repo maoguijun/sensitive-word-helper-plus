@@ -20,7 +20,7 @@ yarn add sensitive-word-helper-plus
 const SWH = require('sensitive-word-helper-plus');
 const swh = new SWH({
   keywords: ['敏感词数组'],
-  step: 3, // 默认是3  // 比如 '敏09感23词sa数45组' 可以替换成 '*09*23*sa*45*'  // step 是从第一个不是节点的字符开始计数
+  step: 3, // 默认是0  // 比如 '敏09感23词sa数45组' 可以替换成 '*09*23*sa*45*'  // step 是从第一个不是节点的字符开始计数
   replacement: '*' // 默认是 *, 比如 'a b' 默认会替换成  '* *'
 });
 
@@ -37,7 +37,7 @@ swh.filterSync('word');
 import SWH from 'sensitive-word-helper-plus';
 const swh = new SWH({
   keywords: ['敏感词数组'],
-  step: 3, // 默认是3  // 比如 '敏09感23词sa数45组' 可以替换成 '*09*23*sa*45*'  // step 是从第一个不是节点的字符开始计数
+  step: 3, // 默认是0  // 比如 '敏09感23词sa数45组' 可以替换成 '*09*23*sa*45*'  // step 是从第一个不是节点的字符开始计数
   replacement: '*' // 默认是 *, 比如 'a b' 默认会替换成  '* *'
 });
 
@@ -64,7 +64,7 @@ swh.filterSync('word');
 import SWH from 'sensitive-word-helper-plus';
 const swh = new SWH({
   keywords: ['敏感词数组'],
-  step: 3, // 默认是3  // 比如 '敏09感23词sa数45组' 可以替换成 '*09*23*sa*45*'  // step 是从第一个不是节点的字符开始计数
+  step: 3, // 默认是0  // 比如 '敏09感23词sa数45组' 可以替换成 '*09*23*sa*45*'  // step 是从第一个不是节点的字符开始计数
   replacement: '*' // 默认是 *, 比如 'a b' 默认会替换成  '* *'
 });
 
@@ -94,7 +94,7 @@ swh.filter('这是一个敏感词字符串', false).then(data => {
 import SWH from 'sensitive-word-helper-plus';
 const swh = new SWH({
   keywords: ['敏感词数组'],
-  step: 3, // 默认是3  // 比如 '敏09感23词sa数45组' 可以替换成 '*09*23*sa*45*'  // step 是从第一个不是节点的字符开始计数
+  step: 3, // 默认是0  // 比如 '敏09感23词sa数45组' 可以替换成 '*09*23*sa*45*'  // step 是从第一个不是节点的字符开始计数
   replacement: '*' // 默认是 *, 比如 'a b' 默认会替换成  '* *'
 });
 

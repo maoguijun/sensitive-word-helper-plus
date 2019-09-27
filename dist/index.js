@@ -6,8 +6,8 @@ const sensitiveWithoutStep_1 = __importDefault(require("./sensitiveWithoutStep")
 const sensitiveWithStep_1 = __importDefault(require("./sensitiveWithStep"));
 class SensitiveWordHelp {
     constructor(obj) {
-        const { keywords, step, replacement } = obj;
-        if (step !== undefined && step) {
+        const { step } = obj;
+        if (step) {
             return new sensitiveWithStep_1.default(obj);
         }
         else {
