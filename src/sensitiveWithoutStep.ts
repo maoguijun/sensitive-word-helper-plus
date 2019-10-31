@@ -50,6 +50,10 @@ class SensitiveWithoutStep extends Tree {
     every: boolean = false,
     replace: boolean = true
   ): FilterValue {
+    if (typeof word !== 'string') {
+      console.error('word must be String !')
+      word = ''
+    }
     let startIndex = 0;
     let endIndex = startIndex;
     const wordLen = word.length;
