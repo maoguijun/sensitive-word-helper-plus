@@ -1,19 +1,24 @@
-/**
- * Created by ChengZheLin on 2019/6/3.
- * Features: index
+/*
+ * @Author: maoguiun
+ * @Date: 2019-09-23 14:35:38
+ * @LastEditors: maoguiun
+ * @LastEditTime: 2019-11-05 12:51:55
+ * @FilePath: \sensitive-word-helper\src\sensitiveWithStep.ts
  */
+
 import { Node, Tree } from './core';
 
 interface FilterValue {
   text?: string | boolean;
   filter: Array<string>;
+  sensitiveWordIndexs?: Array<number>;
   pass?: boolean;
 }
 
 interface SwhpConstructor {
   keywords: Array<string>;
   replacement?: string;
-  step?: number;
+  step?: number
 }
 
 // 判定对象
@@ -74,7 +79,7 @@ class SensitiveWithStep extends Tree {
     let originalWord: string = word;
     let filterKeywords: Array<string> = [];
     word = word.toLocaleUpperCase();
-
+    let sensitiveWordIndexs: Array<number> = [];
     let judgeObjectList: {
       [key: string]: JudgeObject;
     } = {};
@@ -114,6 +119,7 @@ class SensitiveWithStep extends Tree {
         // 判断这个节点是否就是最后一个节点，针对的是单个字符的敏感词
         if (currNode.word) {
           filterTextArr[endIndex] = this.replacement;
+          sensitiveWordIndexs.push(endIndex)
           continue;
         }
 
@@ -199,6 +205,7 @@ class SensitiveWithStep extends Tree {
           }
           findNodeIndexArr.forEach(index => {
             filterTextArr[index] = this.replacement;
+            sensitiveWordIndexs.push(index)
           });
 
           continue;
@@ -219,38 +226,9 @@ class SensitiveWithStep extends Tree {
     return {
       text: replace ? filterTextArr.join('') : originalWord,
       filter: [...new Set(filterKeywords)],
+      sensitiveWordIndexs,
       pass: isPass
     };
-  }
-  /**
-   * 合并两个字符串
-   * @param text1 // 已有的字符串
-   * @param text2 // 需要合并上去的字符串
-   */
-  private convetString(text1: string, text2: string): string {
-    const text1Len: number = text1.length;
-    const text2Len: number = text2.length;
-    const length: number = text1Len > text2Len ? text1Len : text2Len;
-    let result: string = '';
-    for (let i = 0; i < length; i++) {
-      const text1Char: string = text1[i];
-      const text2Char: string = text2[i];
-      if (text1Char === this.replacement) {
-        result += text1Char;
-        continue;
-      }
-      if (text2Char === this.replacement) {
-        result += text2Char;
-        continue;
-      }
-      if (text1Char) {
-        result += text1Char;
-        continue;
-      }
-      result += text2Char;
-    }
-
-    return result;
   }
 
   /**

@@ -61,9 +61,7 @@ class Tree {
             if (!item) {
                 item = new node_1.default(key, node, isWord);
             }
-            else {
-                item.word = isWord;
-            }
+            item.word = item.word || isWord;
             children[key] = item;
             this.insertNode(item, word);
         }

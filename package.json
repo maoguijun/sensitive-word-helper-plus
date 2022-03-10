@@ -1,6 +1,6 @@
 {
   "name": "sensitive-word-helper-plus",
-  "version": "1.1.0",
+  "version": "1.1.3",
   "description": "基于DFA算法的一个敏感词助手, 可以做步长控制",
   "main": "./dist/index.js",
   "scripts": {

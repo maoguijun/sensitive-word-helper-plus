@@ -67,10 +67,8 @@ export default class Tree {
 
       if (!item) {
         item = new Node(key, node, isWord);
-        item.word = item.word || isWord;
-      } else {
-        item.word = isWord;
       }
+      item.word = item.word || isWord;
 
       children[key] = item;
       this.insertNode(item, word);

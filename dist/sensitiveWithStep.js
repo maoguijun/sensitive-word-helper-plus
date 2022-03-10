@@ -1,4 +1,11 @@
 "use strict";
+/*
+ * @Author: maoguiun
+ * @Date: 2019-09-23 14:35:38
+ * @LastEditors: maoguiun
+ * @LastEditTime: 2019-11-05 12:51:55
+ * @FilePath: \sensitive-word-helper\src\sensitiveWithStep.ts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,10 +15,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-/**
- * Created by ChengZheLin on 2019/6/3.
- * Features: index
- */
 const core_1 = require("./core");
 class SensitiveWithStep extends core_1.Tree {
     // 是否替换原文本敏感词
@@ -40,12 +43,17 @@ class SensitiveWithStep extends core_1.Tree {
         this._createFailureTable();
     }
     _filterFn(word, every = false, replace = true) {
+        if (typeof word !== 'string') {
+            console.error('word must be String !');
+            word = '';
+        }
         let startIndex = 0;
         let endIndex = startIndex;
         const wordLen = word.length;
         let originalWord = word;
         let filterKeywords = [];
         word = word.toLocaleUpperCase();
+        let sensitiveWordIndexs = [];
         let judgeObjectList = {};
         // 保存过滤文本
         let filterTextArr = originalWord.split('');
@@ -75,6 +83,7 @@ class SensitiveWithStep extends core_1.Tree {
                 // 判断这个节点是否就是最后一个节点，针对的是单个字符的敏感词
                 if (currNode.word) {
                     filterTextArr[endIndex] = this.replacement;
+                    sensitiveWordIndexs.push(endIndex);
                     continue;
                 }
                 let judgeObject = {
@@ -146,6 +155,7 @@ class SensitiveWithStep extends core_1.Tree {
                     }
                     findNodeIndexArr.forEach(index => {
                         filterTextArr[index] = this.replacement;
+                        sensitiveWordIndexs.push(index);
                     });
                     continue;
                 }
@@ -158,37 +168,9 @@ class SensitiveWithStep extends core_1.Tree {
         return {
             text: replace ? filterTextArr.join('') : originalWord,
             filter: [...new Set(filterKeywords)],
+            sensitiveWordIndexs,
             pass: isPass
         };
-    }
-    /**
-     * 合并两个字符串
-     * @param text1 // 已有的字符串
-     * @param text2 // 需要合并上去的字符串
-     */
-    convetString(text1, text2) {
-        const text1Len = text1.length;
-        const text2Len = text2.length;
-        const length = text1Len > text2Len ? text1Len : text2Len;
-        let result = '';
-        for (let i = 0; i < length; i++) {
-            const text1Char = text1[i];
-            const text2Char = text2[i];
-            if (text1Char === this.replacement) {
-                result += text1Char;
-                continue;
-            }
-            if (text2Char === this.replacement) {
-                result += text2Char;
-                continue;
-            }
-            if (text1Char) {
-                result += text1Char;
-                continue;
-            }
-            result += text2Char;
-        }
-        return result;
     }
     /**
      * 异步快速检测字符串是否无敏感词

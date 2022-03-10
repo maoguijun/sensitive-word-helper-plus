@@ -35,6 +35,10 @@ class SensitiveWithoutStep extends core_1.Tree {
         this._createFailureTable();
     }
     _filterFn(word, every = false, replace = true) {
+        if (typeof word !== 'string') {
+            console.error('word must be String !');
+            word = '';
+        }
         let startIndex = 0;
         let endIndex = startIndex;
         const wordLen = word.length;

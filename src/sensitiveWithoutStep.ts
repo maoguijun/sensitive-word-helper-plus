@@ -79,7 +79,6 @@ class SensitiveWithoutStep extends Tree {
       let key: string = word[endIndex];
       let originalKey: string = originalWord[endIndex];
       currNode = this.search(key, prevNode.children);
-
       if (isJudge && currNode) {
         if (replace) judgeText += originalKey;
         prevNode = currNode;
