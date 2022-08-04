@@ -5,4 +5,4 @@
  * @LastEditTime : 2020-02-06 16:37:14
  * @FilePath: \sensitive-word-helper\demo\filterstring.js
  */
-module.exports = ["1","12","123","1234"]
+module.exports = ["敏感词数组"];

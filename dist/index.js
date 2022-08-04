@@ -50,7 +50,7 @@ class SensitiveWordHelp {
      * @param replace
      */
     filterSync(word, replace = true) {
-        return this.instans.filterSync(word, false, replace);
+        return this.instans.filterSync(word, replace);
     }
     /**
      * 异步过滤方法
@@ -59,7 +59,7 @@ class SensitiveWordHelp {
      */
     filter(word, replace = true) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.instans.filter(word, false, replace);
+            return this.instans.filter(word, replace);
         });
     }
 }

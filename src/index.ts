@@ -55,7 +55,7 @@ class SensitiveWordHelp {
    * @param replace
    */
   filterSync(word: string, replace: boolean = true): FilterValue {
-    return this.instans.filterSync(word, false, replace);
+    return this.instans.filterSync(word, replace);
   }
 
   /**
@@ -64,7 +64,7 @@ class SensitiveWordHelp {
    * @param replace
    */
   async filter(word: string, replace: boolean = true): Promise<FilterValue> {
-    return this.instans.filter(word, false, replace);
+    return this.instans.filter(word, replace);
   }
 }
 

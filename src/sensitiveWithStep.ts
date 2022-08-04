@@ -86,7 +86,6 @@ class SensitiveWithStep extends Tree {
 
     // 保存过滤文本
     let filterTextArr: Array<string> = originalWord.split('');
-    // console.log(82, filterTextArr);
 
     // 是否通过，无敏感词
     let isPass = true;
@@ -103,7 +102,6 @@ class SensitiveWithStep extends Tree {
       // 分词数组如果是空的，就表示目前没有未处理的敏感词
 
       const judgeObjectListLeng = Object.keys(judgeObjectList).length;
-      // console.log(99, endIndex, judgeObjectListLeng, key, originalKey);
       if (!judgeObjectListLeng) {
         currNode = this.search(key, this.root.children);
 
@@ -138,11 +136,9 @@ class SensitiveWithStep extends Tree {
       // 分词数组中不为空
       for (let judgeKey in judgeObjectList) {
         const judgeObject = judgeObjectList[judgeKey];
-        // console.log(133, judgeObject);
 
         // 先判断有没有节点
         const currNode = this.search(key, judgeObject.prevNode.children);
-        // console.log(137, key, judgeObject.prevNode.children, currNode);
         // 如果没有找到就去上一级
         if (!currNode) {
           let failure: Node = judgeObject.prevNode.failure;
@@ -154,7 +150,6 @@ class SensitiveWithStep extends Tree {
             }
             failure = failure.failure;
           }
-          // console.log(154, cruNode);
           if (cruNode) {
             // 找到了就又往list 中插入一个分析对象
             let judgeObject_: JudgeObject = {

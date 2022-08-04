@@ -10,15 +10,12 @@ const SWHP = require("../dist");
 const data = require("./filterstring");
 const swhp = new SWHP({
   keywords: data,
-  step: 2,
+  step: 3,
+  replacement: "",
 });
-
+console.log(16, swhp);
 const run = async () => {
-  console.log(await swhp.every("1"));
-  console.log(await swhp.everySync("12"));
-  console.log(swhp.filterSync("123"));
-  console.log(await swhp.filter("1234"));
-  console.log(swhp.filterSync("12345"));
+  console.log(await swhp.filterSync("敏09感23词sa数45组"));
 };
 run();
 
